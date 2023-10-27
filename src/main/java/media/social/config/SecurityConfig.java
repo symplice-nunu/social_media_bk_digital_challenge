@@ -48,7 +48,11 @@ public class SecurityConfig {
     public static PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
+    private final String[] whiteList = {"/swagger-resources/**",
+            "/swagger-ui.html",
+            "/v3/api-docs",
+            "/v2/api-docs",
+            "/webjars/**"};
 
     // http basic
     @Bean
@@ -57,8 +61,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                         //authorize.anyRequest().authenticated()
                         authorize.requestMatchers(HttpMethod.GET,"/api/**").permitAll()
+                                .requestMatchers(whiteList).permitAll()
                                 .requestMatchers("/api/auth/**").permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 ).httpBasic(Customizer.withDefaults())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
